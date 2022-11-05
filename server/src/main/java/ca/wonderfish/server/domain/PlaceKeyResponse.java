@@ -7,8 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class RealEstate {
-    private String address;
-    private String city;
-    private String state;
+public class PlaceKeyResponse {
+    private String query_id;
+    private String placekey;
 }
