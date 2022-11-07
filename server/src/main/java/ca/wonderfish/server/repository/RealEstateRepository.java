@@ -11,9 +11,11 @@ import java.util.List;
 @Mapper
 public interface RealEstateRepository {
 
+    //get real estates from table_a
     @Select("SELECT * FROM table_a")
     public List<RealEstate> getRealEstateFromTableA();
 
+    //get real estates from table_b
     @Select("SELECT * FROM table_b")
     public List<RealEstate> getRealEstateFromTableB();
 }

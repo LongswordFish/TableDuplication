@@ -19,6 +19,6 @@ public class HomeController {
         responseBody.put("API version", "0.01");
         responseBody.put("Created By", "Robin Yu");
 
-        return new ResponseEntity<>(responseBody, HttpStatus.OK);
+        return new ResponseEntity<>(responseBody.toString(), HttpStatus.OK);
     }
 }

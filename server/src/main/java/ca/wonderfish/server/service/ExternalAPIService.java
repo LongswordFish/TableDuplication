@@ -18,16 +18,11 @@ public class ExternalAPIService {
     @Value("${placeKeyApi}")
     private String placeKeyApi;
 
+    //call the external api to get the place key
+    //return null if no place key returns
     public String getPlaceKey(RealEstate realEstate)
     {
-//        MultiValueMap<String, String> bodyValues = new LinkedMultiValueMap<>();
-//
-//        bodyValues.add("street_address", realEstate.getAddress());
-//        bodyValues.add("city", realEstate.getCity());
-//        bodyValues.add("region", realEstate.getState());
-//        bodyValues.add("postal_code", "");
-//        bodyValues.add("iso_country_code", "US");
-
+        //create request body for the post
         JSONObject queryBody = new JSONObject();
         queryBody.put("street_address", realEstate.getAddress());
         queryBody.put("city", realEstate.getCity());
@@ -38,6 +33,7 @@ public class ExternalAPIService {
         JSONObject requestBody = new JSONObject();
         requestBody.put("query",queryBody);
 
+        //execute post reqeust
         PlaceKeyResponse pr =  webClient.post()
                 .uri("")
                 .header("apikey", placeKeyApi)
