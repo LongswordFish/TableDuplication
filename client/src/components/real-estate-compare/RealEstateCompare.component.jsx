@@ -4,9 +4,7 @@ import { useState,useEffect } from 'react';
 
 import { retrieveTableA,retrieveTableB,deduplicateTableBWithPath,deduplicateTableBWithRequestBody } from '../../utils/api';
 import BeatLoader  from "react-spinners/BeatLoader";
-
-
-
+import { toast } from 'react-toastify';
 
 //used to compare and deduplicate tables
 const RealEstateCompare=()=>{
@@ -18,10 +16,7 @@ const RealEstateCompare=()=>{
     //table name
     const tableNameA="table_a";
     const tableNameB="table_b";
-    
-    //spinner style
-    const style = { position: "fixed", top: "50%", left: "50%", transform: "translate(-50%, -50%)" };
-    
+
     //render table_a and table_b when the page begins
     useEffect(()=>{
         const getTableA = async ()=>{
@@ -51,12 +46,17 @@ const RealEstateCompare=()=>{
     const handleDuplicateTableB = async()=>{
         try{
             setLoading(true);  
-            const duplicatedTableB = await deduplicateTableBWithPath();
-          
+            const duplicatedTableB = await deduplicateTableBWithPath();          
             setTableB(duplicatedTableB);
+            toast.success("Deduplicate table B success!",{
+                position: toast.POSITION.BOTTOM_RIGHT
+            });
             setLoading(false);  
         }catch(err){
-        console.log(err);
+            setLoading(false);
+            toast.error(err?.message, {
+                position: toast.POSITION.BOTTOM_RIGHT
+            });
       }
     }
     
@@ -68,42 +68,49 @@ const RealEstateCompare=()=>{
                 "tableB":tableB
             }
             setLoading(true);
-            const duplicatedTableB = await deduplicateTableBWithRequestBody(tables);
-            
+            const duplicatedTableB = await deduplicateTableBWithRequestBody(tables);       
             setTableB(duplicatedTableB);
+
+            toast.success("Deduplicate table B success!", {
+                position: toast.POSITION.BOTTOM_RIGHT
+            });
+
             setLoading(false);  
         }catch(err){
-        console.log(err);
-      }
+            setLoading(false);
+            toast.error(err?.message, {
+                position: toast.POSITION.BOTTOM_RIGHT
+            });
+        }
     }
 
 
-    return (<>{loading?
-        <div style={style}>
-            <BeatLoader 
-                color="#36d7b7"
-                loading={loading}
-                size={15}
-                aria-label="Loading Spinner"
-                data-testid="loader"
-                margin="10px"
-            />
-        </div>              
-
-    :<Container className="content">
+    return (<Container className="content">
         <Row>
         <Col sm={6}>
             <RealEstateTable realEstates={tableA} tableName={tableNameA}/>
         </Col>
         <Col sm={6}>
         <RealEstateTable realEstates={tableB} tableName={tableNameB}/>
-        </Col>  
+        </Col>
+        {
+            loading?
+            <div style={{ margin:"20px auto", width:"200px"}}>
+                <BeatLoader 
+                    color="#36d7b7"
+                    loading={loading}
+                    size={15}
+                    aria-label="Loading Spinner"
+                    data-testid="loader"
+                    margin="10px"
+                />
+            </div>              
+            : <Button style={{ margin:"20px auto", width:"200px"}} variant="success" onClick={handleDuplicateTableB2} >Deduplicate Table B</Button>  
+        }
         </Row>
-        <Button style={{"marginLeft":"42%"}} variant="success" onClick={handleDuplicateTableB2} >Deduplicate Table B</Button>
-  </Container>
-  }
 
-</>)
+    </Container>
+    )
 }
 
 export default RealEstateCompare;
