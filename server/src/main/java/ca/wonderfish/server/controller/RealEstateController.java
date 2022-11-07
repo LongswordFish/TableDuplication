@@ -8,8 +8,10 @@ import ca.wonderfish.server.service.RealEstateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,9 +69,10 @@ public class RealEstateController {
     //Remove duplicate method 2
     //Remove duplicates in list B from list A by request body
     @PostMapping("/remove-duplicates/")
-    public ResponseEntity<?> removeDuplicatesInBFromAWithBody(@RequestBody DeduplicateRequest deduplicateRequest){
-        //ResponseEntity<?> hasErrors= mapValidationErrorService.MapValidationService(result);
-        //if(hasErrors==null){
+    public ResponseEntity<?> removeDuplicatesInBFromAWithBody(@Valid @RequestBody DeduplicateRequest deduplicateRequest,
+                                                              BindingResult result){
+        ResponseEntity<?> hasErrors= mapValidationErrorService.MapValidationService(result);
+        if(hasErrors==null){
             List<RealEstate> realEstateFromTableA = deduplicateRequest.getTableA();
             List<RealEstate> realEstateFromTableB = deduplicateRequest.getTableB();
 
@@ -77,9 +80,9 @@ public class RealEstateController {
 
             return new ResponseEntity<>(deduplicatedResult, HttpStatus.OK);
 
-//        }else{
-//            return hasErrors;
-//        }
+        }else{
+            return hasErrors;
+        }
 
     }
 
