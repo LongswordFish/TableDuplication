@@ -5,6 +5,8 @@ import ca.wonderfish.server.payload.DeduplicateRequest;
 import ca.wonderfish.server.service.ExternalAPIService;
 import ca.wonderfish.server.service.MapValidationErrorService;
 import ca.wonderfish.server.service.RealEstateService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,9 +31,12 @@ public class RealEstateController {
     @Autowired
     private MapValidationErrorService mapValidationErrorService;
 
+    Logger logger = LoggerFactory.getLogger(getClass());
+
     //Get all the real estates from table a
     @GetMapping("/A")
     public ResponseEntity<List<RealEstate>> getAllRealEstateFromTableA(){
+        logger.info("GET /api/real-estate/A");
         List<RealEstate> realEstateFromTableA = realEstateService.getRealEstateFromTableA();
         return new ResponseEntity<List<RealEstate>>(realEstateFromTableA, HttpStatus.OK);
     }
@@ -39,6 +44,7 @@ public class RealEstateController {
     //Get all the real estates from table b
     @GetMapping("/B")
     public ResponseEntity<List<RealEstate>> getAllRealEstateFromTableB(){
+        logger.info("GET /api/real-estate/B");
         List<RealEstate> realEstateFromTableB = realEstateService.getRealEstateFromTableB();
         return new ResponseEntity<List<RealEstate>>(realEstateFromTableB, HttpStatus.OK);
     }
@@ -47,6 +53,7 @@ public class RealEstateController {
     //Remove duplicates in list B from list A by table name
     @PostMapping("/remove-duplicates/{table_b}/{table_a}")
     public ResponseEntity<?> removeDuplicatesInBFromA(@PathVariable String table_b, @PathVariable String table_a){
+        logger.info("POST /api/real-estate/remove-duplicates/"+table_b+"/"+table_a);
         //use table name to deduplicate instead of asking the front-end to post two lists
         if("table_a".equals(table_a) && "table_b".equals(table_b)){
             List<RealEstate> realEstateFromTableA = realEstateService.getRealEstateFromTableA();
@@ -71,6 +78,7 @@ public class RealEstateController {
     @PostMapping("/remove-duplicates/")
     public ResponseEntity<?> removeDuplicatesInBFromAWithBody(@Valid @RequestBody DeduplicateRequest deduplicateRequest,
                                                               BindingResult result){
+        logger.info("POST /api/real-estate/remove-duplicates/");
         ResponseEntity<?> hasErrors= mapValidationErrorService.MapValidationService(result);
         if(hasErrors==null){
             List<RealEstate> realEstateFromTableA = deduplicateRequest.getTableA();
@@ -81,6 +89,7 @@ public class RealEstateController {
             return new ResponseEntity<>(deduplicatedResult, HttpStatus.OK);
 
         }else{
+            logger.error(hasErrors.toString());
             return hasErrors;
         }
 

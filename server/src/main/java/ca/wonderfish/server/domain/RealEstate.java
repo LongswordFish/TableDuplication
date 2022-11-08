@@ -10,6 +10,7 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RealEstate {
+
     @NotNull
     private String address;
     @NotNull
